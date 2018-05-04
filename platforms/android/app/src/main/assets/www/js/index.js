@@ -28,19 +28,61 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
-    },
 
+    		var localCouch = new PouchDB('crypto_db', {adapter: 'websql'});
+
+    		var remoteCouch = 'http://207.246.115.175:5984/crypto_db';
+
+        PouchDB.debug.disable();
+        //PouchDB.debug.enable('*');
+
+    		this.sync_db(remoteCouch, localCouch);
+
+
+        localCouch.allDocs({
+          include_docs: true,
+          attachments: true,
+          startkey: 'BTC',
+          endkey: 'BTC\ufff0'
+        }).then(function (result) {
+          console.log(result);
+        }).catch(function (err) {
+          console.log(err);
+        });
+
+
+
+    },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
+        var sqlLiteElement = parentElement.querySelector('.sqlLiteElement');
+
+        if (!!window.sqlitePlugin) {
+          sqlLiteElement.setAttribute('style', 'display:block;');
+        }
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+    sync_db: function (remoteCouch, localCouch) {
+      //syncDom.setAttribute('data-sync-state', 'syncing');
+      var opts = {live: true, retry: true};
+      //localCouch.replicate.to(remoteCouch, opts, syncError);
+      //localCouch.replicate.from(remoteCouch, opts);
+      //PouchDB.replicate(remoteCouch, localCouch, opts)
+      alert('start sync');
+      localCouch.replicate.from(remoteCouch).on('complete', function(info) {
+      // then two-way, continuous, retriable sync
+      localCouch.sync(remoteCouch, opts)
+        .on('change', function () {alert('change');})
+        .on('paused', function () {alert('paused');})
+        .on('error', function () {alert('error 1');});
+        }).on('error', function () {alert('error 2');});
     }
-};
-
+  }
 app.initialize();

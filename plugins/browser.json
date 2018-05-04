@@ -9,6 +9,15 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "br.com.pouchdb.app"
+    },
+    "cordova-plugin-sqlite-2": {
+      "PACKAGE_NAME": "br.com.pouchdb.app"
+    },
+    "cordova-plugin-websql": {
+      "PACKAGE_NAME": "br.com.pouchdb.app"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "br.com.pouchdb.app"
     }
   },
   "dependent_plugins": {}
